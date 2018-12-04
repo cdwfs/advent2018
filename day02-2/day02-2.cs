@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace day2_2 {
+namespace day02_2 {
     class Program {
         static void Main(string[] args) {
             // Brute force ahoy!

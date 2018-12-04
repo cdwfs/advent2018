@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace day1_1 {
+namespace day01_1 {
     class Program {
         static void Main(string[] args) {
             var inStream = new StreamReader(args[0]);

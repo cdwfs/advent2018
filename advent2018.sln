@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day1-1", "day1-1\day1-1.csproj", "{6B60F983-4ED6-4BB1-97A8-F9743566B0A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day01-1", "day01-1\day01-1.csproj", "{6B60F983-4ED6-4BB1-97A8-F9743566B0A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day1-2", "day1-2\day1-2.csproj", "{D40C1A98-5B1E-4E57-A65C-C39A3A59B272}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day01-2", "day01-2\day01-2.csproj", "{D40C1A98-5B1E-4E57-A65C-C39A3A59B272}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day2-1", "day2-1\day2-1.csproj", "{72F224E3-6802-411C-A7DA-6460C92D8E8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day02-1", "day02-1\day02-1.csproj", "{72F224E3-6802-411C-A7DA-6460C92D8E8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day2-2", "day2-2\day2-2.csproj", "{93E357E6-FAA8-4113-8F5B-F0C784F2BA29}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day02-2", "day02-2\day02-2.csproj", "{93E357E6-FAA8-4113-8F5B-F0C784F2BA29}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day3-1", "day3-1\day3-1.csproj", "{AF4BA9FB-2B05-4067-985F-64E5E5A94D48}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day03-1", "day03-1\day03-1.csproj", "{AF4BA9FB-2B05-4067-985F-64E5E5A94D48}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day3-2", "day3-2\day3-2.csproj", "{E496581D-27CB-4BBD-8B20-607842B7BBFB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "day03-2", "day03-2\day03-2.csproj", "{E496581D-27CB-4BBD-8B20-607842B7BBFB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
