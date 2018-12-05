@@ -30,7 +30,7 @@ namespace day02_2 {
                         return;
                     }
                 }
-                lines = lines.Append(line).ToList();
+                lines.Add(line);
             }
             Console.WriteLine($"Found nothing?");
         }
