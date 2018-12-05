@@ -33,8 +33,7 @@ namespace day05_1 {
             }
 
             for (int c = 0; c < 26; ++c) {
-                string outStr = new string(outputs[c], 0, outputSizes[c]);
-                Console.WriteLine($"without {(char)('a' + c)}, length = {outStr.Length}");
+                Console.WriteLine($"without {(char)('a' + c)}, length = {outputSizes[c]}");
             }
         }
     }
