@@ -11,28 +11,30 @@ namespace day05_1 {
             var inStream = new StreamReader(args[0]);
             string input = inStream.ReadLine();
             int caseDiff = Math.Abs('A' - 'a');
-            for (char c = 'a'; c <= 'z'; ++c) {
-                char upper = Char.ToUpper(c);
-                char[] output = new char[input.Length];
-                int inputStart = 0;
-                do {
-                    output[0] = input[inputStart];
-                    inputStart += 1;
-                } while (output[0] == c || output[0] == upper);
-                int outputSize = 1;
-                for (int i = inputStart; i < input.Length; ++i) {
-                    if (input[i] == c || input[i] == upper) {
+            var outputs = new char[26][];
+            for (int c = 0; c < 26; ++c) {
+                outputs[c] = new char[input.Length];
+            }
+            var outputSizes = new int[26];
+            for (int i = 0; i < input.Length; ++i) {
+                for (int c = 0; c < 26; ++c) {
+                    char lower = (char)('a' + c);
+                    char upper = (char)('A' + c);
+                    if (input[i] == lower || input[i] == upper) {
                         continue;
                     }
-                    if (outputSize > 0 && Math.Abs(output[outputSize - 1] - input[i]) == caseDiff) {
-                        outputSize -= 1;
-                        continue;
+                    if (outputSizes[c] > 0 && Math.Abs(outputs[c][outputSizes[c] - 1] - input[i]) == caseDiff) {
+                        outputSizes[c] -= 1;
+                    } else {
+                        outputs[c][outputSizes[c]] = input[i];
+                        outputSizes[c] += 1;
                     }
-                    output[outputSize] = input[i];
-                    outputSize += 1;
                 }
-                string outStr = new string(output, 0, outputSize);
-                Console.WriteLine($"without {c}, length = {outStr.Length}");
+            }
+
+            for (int c = 0; c < 26; ++c) {
+                string outStr = new string(outputs[c], 0, outputSizes[c]);
+                Console.WriteLine($"without {(char)('a' + c)}, length = {outStr.Length}");
             }
         }
     }
