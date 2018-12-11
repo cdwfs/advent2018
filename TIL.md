@@ -12,7 +12,7 @@
 - new POD allocations always (?) default to zero.
 - `List.Add()` to append to `List`. `List.Append()` is totally different.
 - `String.Substring()` for string slicing
-- Currently O(N² * L) but O(NlogN * L) is possible:
+- Currently O(NÂ² * L) but O(NlogN * L) is possible:
   - Read all lines into an array
   - for each character pos C in 1..L:
     - make a copy of lines array without character C
@@ -46,4 +46,37 @@
 ##### [Day 7](https://adventofcode.com/2018/day/7): job scheduling
 - Named tuples -- (string name, int id) foo; foo.name = "Ben"; foo.id = 7;
 - Advanced $-string formatting -- $"{count,3:D} will be padded to three characters".
-  - How to pad with zeroes? Floats? Hex? 
+  - How to pad with zeroes? Floats? Hex?
+
+##### [Day 8](https://adventofcode.com/2018/day/8): tree building
+- trees / recursion.
+- tried to experiment with making my own stream/generator -- read in input file
+  into a string, and pop numbers off the front on demand. I tried to do this using
+  C# yield and IEnumerator, but I don't think it's the correct approach here; that's
+  mainly for `foreach` support. Rolling my own class would probably be sufficient.
+
+##### [Day 9](https://adventofcode.com/2018/day/9): deterministic marble game
+- `Int64` by default!
+- Functions can return named tuples.
+- TODO optimizations:
+  - store as an array (or SoA) instead of a linked list, to save on allocation costs
+    and improve caching
+  - process 23 marbles per loop iteration. The first 22 can all be added at once;
+    only the 23rd is weird.
+
+##### [Day 10](https://adventofcode.com/2018/day/10): messages in the stars
+- The `System.Drawing` module:
+  - Create `Bitmap` objects
+  - For pixel-level ops, use `Bitmap.GetPixel()` and `Bitmap.SetPixel()`.
+  - For bitmap-wide ops like Clear, use `Graphics g = Graphics.FromImage(bmp)` and then `g.Clear()`.
+  - `bmp.Save()` can write to a variety of standard formats (PNG, JPG).
+- [tesseract](https://github.com/tesseract-ocr/tesseract) open-source OCR. Some people were using
+  it to try and auto-recognize the output text and print it to the console, rather than rely on
+  visually inspecting the output images. I never got it working, even with a large border and
+  scaled-up pixels. Nice to have in the toolbox though, I guess!
+
+##### [Day 11](https://adventofcode.com/2018/day/11): grid of fuel cells
+- TODO: multi-dimensional array order?
+- Semi-clever algorithmic speedup to avoid redundant sums
+
+
