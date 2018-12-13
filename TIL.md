@@ -76,7 +76,22 @@
   scaled-up pixels. Nice to have in the toolbox though, I guess!
 
 ##### [Day 11](https://adventofcode.com/2018/day/11): grid of fuel cells
-- TODO: multi-dimensional array order?
+- multi-dimensional array memory layout. According to the [CLI spec](http://www.ecma-international.org/publications/standards/Ecma-335.htm):
+> Array elements shall be  laid out within the array object in row-major order
+> (i.e., the elements associated with the rightmost array dimension shall be laid
+> out contiguously from lowest to highest index).
 - Semi-clever algorithmic speedup to avoid redundant sums
 
+##### [Day 12](https://adventofcode.com/2018/day/12): cellular automata plants
+- `Match.Groups[key].Value` is probably preferable to `Match.Groups[key].ToString()`.
+- `StreamReader` objects should be `Dispose()`ed when they're finished.
+- `Array.FindIndex()` and `FindLastIndex()`
 
+##### [Day 13](https://adventofcode.com/2018/day/13): traffic simulator
+- Dictionary initializer syntax (C#6+)
+- `IComparable` for `Sort()`ability.
+- `Array.Count(predicate)` to count the elements that satisfy a predicate without
+  creating a temporary collection.
+  - Requires `System.Linq`
+  - In this case, I actually want the filtered collection as well, so I use
+    `Array.FindAll()`.
