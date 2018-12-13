@@ -10,6 +10,7 @@ namespace day01_1 {
             while ((line = inStream.ReadLine()) != null) {
                 freq += Int32.Parse(line);
             }
+            inStream.Dispose();
             Console.WriteLine($"freq = {freq}");
         }
     }

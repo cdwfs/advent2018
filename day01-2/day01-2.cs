@@ -18,6 +18,7 @@ namespace day01_1 {
                         return;
                     }
                 }
+                inStream.Dispose();
             }
         }
     }

@@ -30,6 +30,7 @@ namespace day07_2 {
                 stepPrereqCounts[postIdx] = Math.Max(1, stepPrereqCounts[postIdx] + 1);
                 stepPrereqCounts[preIdx] = Math.Max(0, stepPrereqCounts[preIdx]);
             }
+            inStream.Dispose();
             int stepCount = 0;
             foreach (var count in stepPrereqCounts) {
                 if (count >= 0) {

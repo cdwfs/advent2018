@@ -61,6 +61,7 @@ namespace day06_1 {
                 oldCells[y+1, x+1] = lineCount;
                 lineCount += 1;
             }
+            inStream.Dispose();
             int[] closestCounts = new int[lineCount];
             for (int i = 0; i < closestCounts.Length; ++i) {
                 closestCounts[i] = 1;

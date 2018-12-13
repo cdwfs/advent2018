@@ -10,6 +10,7 @@ namespace day05_1 {
         static void Main(string[] args) {
             var inStream = new StreamReader(args[0]);
             string input = inStream.ReadLine();
+            inStream.Dispose();
             int caseDiff = Math.Abs('A' - 'a');
             var outputs = new char[26][];
             for (int c = 0; c < 26; ++c) {

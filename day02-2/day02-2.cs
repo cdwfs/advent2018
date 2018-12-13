@@ -32,6 +32,7 @@ namespace day02_2 {
                 }
                 lines.Add(line);
             }
+            inStream.Dispose();
             Console.WriteLine($"Found nothing?");
         }
     }

@@ -49,6 +49,7 @@ namespace day09_1 {
             Regex rx = new Regex(@"^(?<players>\d+) players; last marble is worth (?<points>\d+) points", RegexOptions.Compiled);
             StreamReader inStream = new StreamReader(args[0]);
             string line = inStream.ReadLine();
+            inStream.Dispose();
             var match = rx.Match(line);
             int playerCount = Int32.Parse(match.Groups["players"].Value);
             int lastMarblePoints = Int32.Parse(match.Groups["points"].Value);

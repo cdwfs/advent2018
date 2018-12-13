@@ -36,6 +36,7 @@ namespace day06_2 {
                 points.Add((x+1, y+1));
                 lineCount += 1;
             }
+            inStream.Dispose();
 
             int safeCellCount = 0;
             for (int y = 1; y < DIM - 1; ++y) {

@@ -35,6 +35,7 @@ namespace day08_1 {
         static void Main(string[] args) {
             StreamReader inStream = new StreamReader(args[0]);
             TreeNode root = new TreeNode(ref inStream);
+            inStream.Dispose();
             Console.WriteLine($"sum is {root.MetadataSum()}");
         }
     }

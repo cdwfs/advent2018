@@ -39,6 +39,7 @@ namespace day03_2 {
                     nonOverlappingClaims.Add(c);
                 }
             }
+            inStream.Dispose();
 
             foreach (var c in nonOverlappingClaims) {
                 Console.WriteLine($"claim {c} does not overlap");

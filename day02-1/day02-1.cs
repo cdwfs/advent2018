@@ -33,6 +33,7 @@ namespace day02_1 {
                     threeCount += 1;
                 }
             }
+            inStream.Dispose();
             Console.WriteLine($"twos: {twoCount}, threes: {threeCount}, product: {twoCount*threeCount}");
         }
     }

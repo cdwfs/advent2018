@@ -10,6 +10,7 @@ namespace day05_1 {
         static void Main(string[] args) {
             var inStream = new StreamReader(args[0]);
             string input = inStream.ReadLine();
+            inStream.Dispose();
             char[] output = new char[input.Length];
             output[0] = input[0];
             int outputSize = 1;

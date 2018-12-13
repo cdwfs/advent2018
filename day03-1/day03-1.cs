@@ -40,6 +40,7 @@ namespace day03_1 {
                     }
                 }
             }
+            inStream.Dispose();
 
             Console.WriteLine($"{cellsInTwoOrMore} cells in 2+ claims");
         }

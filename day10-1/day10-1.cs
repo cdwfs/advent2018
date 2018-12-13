@@ -26,6 +26,7 @@ namespace day10_1 {
                 Int64 vy = Int64.Parse(match.Groups["vy"].Value);
                 points.Add(new Point { x0 = px, y0 = py, dx = vx, dy = vy });
             }
+            inStream.Dispose();
 
             for (Int64 step = 10453; step < 10466; ++step) {
                 Int64 xMin = Int32.MaxValue, xMax = Int32.MinValue;

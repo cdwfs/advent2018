@@ -57,6 +57,7 @@ namespace day04_1 {
                 //string w2 = m.Groups["word2"].Value;
                 //Console.WriteLine($"{minute} {w1} {w2}");
             }
+            inStream.Dispose();
 
             var allGuards = guardStats.Values;
             int maxMinutes = 0;

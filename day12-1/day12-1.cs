@@ -36,6 +36,7 @@ namespace day12_1 {
                 char result = Char.Parse(match.Groups["result"].Value);
                 rules.Add(pattern, result);
             }
+            inStream.Dispose();
 
             for (int g = 1; g <= MAX_GENERATION; ++g) {
                 char[] newPots = new char[pots.Length];

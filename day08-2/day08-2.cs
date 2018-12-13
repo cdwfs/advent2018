@@ -41,6 +41,7 @@ namespace day08_2 {
         static void Main(string[] args) {
             StreamReader inStream = new StreamReader(args[0]);
             TreeNode root = new TreeNode(ref inStream);
+            inStream.Dispose();
             Console.WriteLine($"value is {root.Value()}");
         }
     }
