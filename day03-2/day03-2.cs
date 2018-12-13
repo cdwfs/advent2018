@@ -15,11 +15,11 @@ namespace day03_2 {
             while ((line = inStream.ReadLine()) != null) {
                 var m = rx.Match(line);
                 Debug.Assert(m.Success, "regex did not match line!");
-                int c = Int32.Parse(m.Groups["c"].ToString());
-                int x = Int32.Parse(m.Groups["x"].ToString());
-                int y = Int32.Parse(m.Groups["y"].ToString());
-                int w = Int32.Parse(m.Groups["w"].ToString());
-                int h = Int32.Parse(m.Groups["h"].ToString());
+                int c = Int32.Parse(m.Groups["c"].Value);
+                int x = Int32.Parse(m.Groups["x"].Value);
+                int y = Int32.Parse(m.Groups["y"].Value);
+                int w = Int32.Parse(m.Groups["w"].Value);
+                int h = Int32.Parse(m.Groups["h"].Value);
                 bool hasOverlap = false;
                 for (int iy = 0; iy < h; ++iy) {
                     for (int ix = 0; ix < w; ++ix) {

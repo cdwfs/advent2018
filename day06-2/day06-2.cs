@@ -31,8 +31,8 @@ namespace day06_2 {
             while ((line = inStream.ReadLine()) != null) {
             //foreach (var line in testLines) {
                 var m = rx.Match(line);
-                int x = Int32.Parse(m.Groups["x"].ToString());
-                int y = Int32.Parse(m.Groups["y"].ToString());
+                int x = Int32.Parse(m.Groups["x"].Value);
+                int y = Int32.Parse(m.Groups["y"].Value);
                 points.Add((x+1, y+1));
                 lineCount += 1;
             }

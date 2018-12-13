@@ -50,8 +50,8 @@ namespace day09_1 {
             StreamReader inStream = new StreamReader(args[0]);
             string line = inStream.ReadLine();
             var match = rx.Match(line);
-            int playerCount = Int32.Parse(match.Groups["players"].ToString());
-            int lastMarblePoints = Int32.Parse(match.Groups["points"].ToString());
+            int playerCount = Int32.Parse(match.Groups["players"].Value);
+            int lastMarblePoints = Int32.Parse(match.Groups["points"].Value);
             Marble currentMarble = new Marble(0);
             int[] playerScores = new int[playerCount];
             int currentPlayer = 0;

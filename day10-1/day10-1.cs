@@ -20,10 +20,10 @@ namespace day10_1 {
             var points = new List<Point>();
             while ((line = inStream.ReadLine()) != null) {
                 var match = rx.Match(line);
-                Int64 px = Int64.Parse(match.Groups["px"].ToString());
-                Int64 py = Int64.Parse(match.Groups["py"].ToString());
-                Int64 vx = Int64.Parse(match.Groups["vx"].ToString());
-                Int64 vy = Int64.Parse(match.Groups["vy"].ToString());
+                Int64 px = Int64.Parse(match.Groups["px"].Value);
+                Int64 py = Int64.Parse(match.Groups["py"].Value);
+                Int64 vx = Int64.Parse(match.Groups["vx"].Value);
+                Int64 vy = Int64.Parse(match.Groups["vy"].Value);
                 points.Add(new Point { x0 = px, y0 = py, dx = vx, dy = vy });
             }
 

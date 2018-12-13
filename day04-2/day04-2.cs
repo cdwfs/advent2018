@@ -24,13 +24,13 @@ namespace day04_1 {
             while ((line = inStream.ReadLine()) != null) {
                 var m = rx.Match(line);
                 Debug.Assert(m.Success, "regex did not match line!");
-                int minute = Int32.Parse(m.Groups["minute"].ToString());
-                string w1 = m.Groups["word1"].ToString();
+                int minute = Int32.Parse(m.Groups["minute"].Value);
+                string w1 = m.Groups["word1"].Value;
                 if (w1 == "Guard") {
                     // if current guard was asleep, mark the rest of the hour as asleep
                     Debug.Assert(sleepStart == -1, "shift change while asleep");
                     // new guard on duty
-                    currentGuard = Int32.Parse(m.Groups["word2"].ToString());
+                    currentGuard = Int32.Parse(m.Groups["word2"].Value);
                     if (!guardStats.ContainsKey(currentGuard)) {
                         var newGuard = new GuardStats {
                             id = currentGuard,
@@ -54,7 +54,7 @@ namespace day04_1 {
                     sleepStart = -1;
                 }
 
-                //string w2 = m.Groups["word2"].ToString();
+                //string w2 = m.Groups["word2"].Value;
                 //Console.WriteLine($"{minute} {w1} {w2}");
             }
 

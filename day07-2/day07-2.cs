@@ -24,8 +24,8 @@ namespace day07_2 {
             }
             while ((line = inStream.ReadLine()) != null) {
                 var m = rx.Match(line);
-                int preIdx = Char.Parse(m.Groups["pre"].ToString()) - 'A';
-                int postIdx = Char.Parse(m.Groups["post"].ToString()) - 'A';
+                int preIdx = Char.Parse(m.Groups["pre"].Value) - 'A';
+                int postIdx = Char.Parse(m.Groups["post"].Value) - 'A';
                 stepDeps[preIdx].Add(postIdx);
                 stepPrereqCounts[postIdx] = Math.Max(1, stepPrereqCounts[postIdx] + 1);
                 stepPrereqCounts[preIdx] = Math.Max(0, stepPrereqCounts[preIdx]);

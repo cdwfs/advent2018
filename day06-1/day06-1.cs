@@ -56,8 +56,8 @@ namespace day06_1 {
             while ((line = inStream.ReadLine()) != null) {
             //foreach(var line in testLines) {
                 var m = rx.Match(line);
-                int x = Int32.Parse(m.Groups["x"].ToString());
-                int y = Int32.Parse(m.Groups["y"].ToString());
+                int x = Int32.Parse(m.Groups["x"].Value);
+                int y = Int32.Parse(m.Groups["y"].Value);
                 oldCells[y+1, x+1] = lineCount;
                 lineCount += 1;
             }
