@@ -95,3 +95,6 @@
   - Requires `System.Linq`
   - In this case, I actually want the filtered collection as well, so I use
     `Array.FindAll()`.
+
+##### [Day 14](https://adventofcode.com/2018/day/14): recipe scoring
+- `const` members can't be static? (not a problem; I just wonder why that is)
