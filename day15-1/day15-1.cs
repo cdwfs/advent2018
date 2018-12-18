@@ -10,103 +10,6 @@ using System.Threading.Tasks;
 namespace day15_1 {
     class Program {
         static int MAP_X = 0, MAP_Y = 0;
-        // A* implementation from http://gigi.nullneuron.net/gigilabs/a-pathfinding-example-in-c/
-        class Location {
-            public int X;
-            public int Y;
-            public int F;
-            public int G;
-            public int H;
-            public Location Parent;
-        }
-        static List<Location> GetWalkableAdjacentSquares(int x, int y, int targetX, int targetY, char[,] map) {
-            var proposedLocations = new List<Location>()
-            {
-                new Location { X = x, Y = y - 1 },
-                new Location { X = x, Y = y + 1 },
-                new Location { X = x - 1, Y = y },
-                new Location { X = x + 1, Y = y },
-            };
-
-            return proposedLocations.Where(l => map[l.Y,l.X] == '.' || (l.X == targetX && l.Y == targetY)).ToList();
-        }
-        static int FindPath(int fromX, int fromY, int toX, int toY, char[,] map) {
-            Debug.Assert(map[toY, toX] == '.', "pathing to occupied cell");
-            Location current = null;
-            var start = new Location { X = fromX, Y = fromY };
-            var target = new Location { X = toX, Y = toY };
-            var openList = new List<Location>();
-            var closedList = new List<Location>();
-            int g = 0;
-
-            // start by adding the original position to the open list
-            openList.Add(start);
-
-            bool foundPath = false;
-            while (openList.Count > 0) {
-                // get the square with the lowest F score
-                var lowest = openList.Min(l => l.F);
-                current = openList.First(l => l.F == lowest);
-
-                // add the current square to the closed list
-                closedList.Add(current);
-
-                // remove it from the open list
-                openList.Remove(current);
-
-                // if we added the destination to the closed list, we've found a path
-                if (closedList.FirstOrDefault(l => l.X == target.X && l.Y == target.Y) != null) {
-                    foundPath = true;
-                    break;
-                }
-
-                var adjacentSquares = GetWalkableAdjacentSquares(current.X, current.Y, toX, toY, map);
-                g++;
-
-                foreach (var adjacentSquare in adjacentSquares) {
-                    // if this adjacent square is already in the closed list, ignore it
-                    if (closedList.FirstOrDefault(l => l.X == adjacentSquare.X
-                            && l.Y == adjacentSquare.Y) != null)
-                        continue;
-
-                    // if it's not in the open list...
-                    if (openList.FirstOrDefault(l => l.X == adjacentSquare.X
-                            && l.Y == adjacentSquare.Y) == null) {
-                        // compute its score, set the parent
-                        adjacentSquare.G = g;
-                        adjacentSquare.H = ComputeHScore(adjacentSquare.X, adjacentSquare.Y, target.X, target.Y);
-                        adjacentSquare.F = adjacentSquare.G + adjacentSquare.H;
-                        adjacentSquare.Parent = current;
-
-                        // and add it to the open list
-                        openList.Insert(0, adjacentSquare);
-                    } else {
-                        // test if using the current G score makes the adjacent square's F score
-                        // lower, if yes update the parent because it means it's a better path
-                        if (g + adjacentSquare.H < adjacentSquare.F) {
-                            adjacentSquare.G = g;
-                            adjacentSquare.F = adjacentSquare.G + adjacentSquare.H;
-                            adjacentSquare.Parent = current;
-                        }
-                    }
-                }
-            }
-            if (foundPath) {
-                int length = 0;
-                while (current != null) {
-                    length += 1;
-                    current = current.Parent;
-                }
-                return length;
-            } else {
-                return -1;
-            }
-        }
-
-        static int ComputeHScore(int x, int y, int targetX, int targetY) {
-            return Math.Abs(targetX - x) + Math.Abs(targetY - y);
-        }
-
         // Creature class
         const int ATTACK_POWER = 3;
         const int STARTING_HEALTH = 200;
@@ -165,7 +68,6 @@ namespace day15_1 {
         }
         // Print map state
         static void PrintMap(char[,] map, Creature[,] creatureMap) {
-            return;
             for (int y = 0; y < MAP_Y; ++y) {
                 for (int x = 0; x < MAP_X; ++x) {
                     Console.Write(map[y, x]);
@@ -303,6 +205,53 @@ namespace day15_1 {
                         var inRangeTiles = inRangeTileList.ToArray();
                         Array.Sort(inRangeTiles);
 
+                        // Get the shortest path from c to all reachable tiles in the map.
+                        // Breadth first search FTW.
+                        // The dir field of each cell in pathMap only stores the direction of the first move from the start
+                        // to reach that cell (1=north, 2=west, 3=east, 4=south)
+                        var pathMap = new (int distance, int dir)[MAP_Y, MAP_X];
+                        pathMap[c.Y, c.X] = (0, -1);
+                        var visitList = new List<(Int64 x, Int64 y)>();
+                        visitList.Add((c.X, c.Y));
+                        int visitListSize = 1;
+                        while (visitListSize != 0) {
+                            var newList = new List<(Int64 x, Int64 y)>();
+                            int newListSize = 0;
+                            foreach (var (x, y) in visitList) {
+                                (int distance, int dir) p = pathMap[y, x];
+                                if (y > 0 && map[y - 1, x] == '.' && pathMap[y - 1, x].dir == 0) {
+                                    if (!newList.Contains((x, y - 1))) {
+                                        newList.Add((x, y - 1));
+                                        newListSize += 1;
+                                        pathMap[y - 1, x] = (p.distance + 1, p.dir == -1 ? 1 : p.dir);
+                                    }
+                                }
+                                if (x > 0 && map[y, x - 1] == '.' && pathMap[y, x - 1].dir == 0) {
+                                    if (!newList.Contains((x - 1, y))) {
+                                        newList.Add((x - 1, y));
+                                        newListSize += 1;
+                                        pathMap[y, x - 1] = (p.distance + 1, p.dir == -1 ? 2 : p.dir);
+                                    }
+                                }
+                                if (x < MAP_X - 1 && map[y, x + 1] == '.' && pathMap[y, x + 1].dir == 0) {
+                                    if (!newList.Contains((x + 1, y))) {
+                                        newList.Add((x + 1, y));
+                                        newListSize += 1;
+                                        pathMap[y, x + 1] = (p.distance + 1, p.dir == -1 ? 3 : p.dir);
+                                    }
+                                }
+                                if (y < MAP_Y - 1 && map[y + 1, x] == '.' && pathMap[y + 1, x].dir == 0) {
+                                    if (!newList.Contains((x, y + 1))) {
+                                        newList.Add((x, y + 1));
+                                        newListSize += 1;
+                                        pathMap[y + 1, x] = (p.distance + 1, p.dir == -1 ? 4 : p.dir);
+                                    }
+                                }
+                            }
+                            visitList = newList;
+                            visitListSize = newListSize;
+                        }
+
                         // - Find a path to each open tile in range, tracking the shortest path
                         //   (breaking ties by reading order of the destination)
                         //   - If no open tiles are reachable, this creature's turn is over.
@@ -310,8 +259,8 @@ namespace day15_1 {
                         bool foundReachableTile = false;
                         Coordinate moveTarget = new Coordinate();
                         foreach (var t in inRangeTiles) {
-                            int distance = FindPath(c.X, c.Y, t.X, t.Y, map);
-                            Debug.Assert(distance != 0, "erm nobody's adjacent?");
+                            int distance = pathMap[t.Y,t.X].distance;
+                            Debug.Assert(distance >= 0);
                             if (distance > 0 && distance < minDistance) {
                                 moveTarget = t;
                                 minDistance = distance;
@@ -325,36 +274,7 @@ namespace day15_1 {
                         //   - If two paths of equal length exist, the step taken should be the own lower
                         //     in reading order. So, we need to know not just the shortest path but the
                         //     path length from each adjacent tile.
-                        int pathDir = 0;
-                        minDistance = Int32.MaxValue;
-                        if (c.Y > 0 && map[c.Y-1,c.X] == '.') {
-                            int distance = FindPath(c.X, c.Y - 1, moveTarget.X, moveTarget.Y, map);
-                            if (distance >= 0 && distance < minDistance) {
-                                pathDir = 1;
-                                minDistance = distance;
-                            }
-                        }
-                        if (c.X > 0 && map[c.Y, c.X - 1] == '.') {
-                            int distance = FindPath(c.X - 1, c.Y, moveTarget.X, moveTarget.Y, map);
-                            if (distance >= 0 && distance < minDistance) {
-                                pathDir = 2;
-                                minDistance = distance;
-                            }
-                        }
-                        if (c.X < MAP_X - 1 && map[c.Y, c.X + 1] == '.') {
-                            int distance = FindPath(c.X + 1, c.Y, moveTarget.X, moveTarget.Y, map);
-                            if (distance >= 0 && distance < minDistance) {
-                                pathDir = 3;
-                                minDistance = distance;
-                            }
-                        }
-                        if (c.Y < MAP_Y - 1 && map[c.Y + 1, c.X] == '.') {
-                            int distance = FindPath(c.X, c.Y + 1, moveTarget.X, moveTarget.Y, map);
-                            if (distance >= 0 && distance < minDistance) {
-                                pathDir = 4;
-                                minDistance = distance;
-                            }
-                        }
+                        int pathDir = pathMap[moveTarget.Y,moveTarget.X].dir;
                         (int newX, int newY) = (c.X, c.Y);
                         if (pathDir == 1) {
                             newY -= 1;
