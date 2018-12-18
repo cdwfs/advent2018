@@ -164,7 +164,7 @@ namespace day15_1 {
                     if (target == null) {
                         // - Identify all open tiles in range (not occupied, and adjacent to an enemy)
                         //   - If no open tiles are in range, this creature's turn is over.
-                        var inRangeTiles = new List<(Int64 x, Int64 y)>(targets.Length * 4);
+                        var inRangeTiles = new HashSet<(Int64 x, Int64 y)>(targets.Length * 4);
                         bool hasInRangeTile = false;
                         foreach (var t in targets) {
                             if (t.Y > 0 && map[t.Y - 1, t.X] == '.') {
@@ -203,24 +203,32 @@ namespace day15_1 {
                             foreach (var (x, y) in visitList) {
                                 (int distance, int dir) p = pathMap[y, x];
                                 if (y > 0 && map[y - 1, x] == '.' && pathMap[y - 1, x].dir == 0) {
-                                    pathMap[y - 1, x] = (p.distance + 1, p.dir == -1 ? 1 : p.dir);
-                                    newList.Add((x, y - 1));
-                                    newListSize += 1;
+                                    if (!newList.Contains((x, y - 1))) {
+                                        newList.Add((x, y - 1));
+                                        newListSize += 1;
+                                        pathMap[y - 1, x] = (p.distance + 1, p.dir == -1 ? 1 : p.dir);
+                                    }
                                 }
                                 if (x > 0 && map[y, x - 1] == '.' && pathMap[y, x - 1].dir == 0) {
-                                    pathMap[y, x - 1] = (p.distance + 1, p.dir == -1 ? 2 : p.dir);
-                                    newList.Add((x - 1, y));
-                                    newListSize += 1;
+                                    if (!newList.Contains((x - 1, y))) {
+                                        newList.Add((x - 1, y));
+                                        newListSize += 1;
+                                        pathMap[y, x - 1] = (p.distance + 1, p.dir == -1 ? 2 : p.dir);
+                                    }
                                 }
                                 if (x < MAP_X - 1 && map[y, x + 1] == '.' && pathMap[y, x + 1].dir == 0) {
-                                    pathMap[y, x + 1] = (p.distance + 1, p.dir == -1 ? 3 : p.dir);
-                                    newList.Add((x + 1, y));
-                                    newListSize += 1;
+                                    if (!newList.Contains((x + 1, y))) {
+                                        newList.Add((x + 1, y));
+                                        newListSize += 1;
+                                        pathMap[y, x + 1] = (p.distance + 1, p.dir == -1 ? 3 : p.dir);
+                                    }
                                 }
                                 if (y < MAP_Y - 1 && map[y + 1, x] == '.' && pathMap[y + 1, x].dir == 0) {
-                                    pathMap[y + 1, x] = (p.distance + 1, p.dir == -1 ? 4 : p.dir);
-                                    newList.Add((x, y + 1));
-                                    newListSize += 1;
+                                    if (!newList.Contains((x, y + 1))) {
+                                        newList.Add((x, y + 1));
+                                        newListSize += 1;
+                                        pathMap[y + 1, x] = (p.distance + 1, p.dir == -1 ? 4 : p.dir);
+                                    }
                                 }
                             }
                             visitList = newList;
