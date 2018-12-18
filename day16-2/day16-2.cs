@@ -7,11 +7,29 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace day16_1 {
+namespace day16_2 {
     class Program {
         enum Arg {
             VAL = 0,
             REG = 1,
+        }
+        enum OpcodeId {
+            ADDR =  0,
+            ADDI =  1,
+            MULR =  2,
+            MULI =  3,
+            BANR =  4,
+            BANI =  5,
+            BORR =  6,
+            BORI =  7,
+            SETR =  8,
+            SETI =  9,
+            GTIR = 10,
+            GTRI = 11,
+            GTRR = 12,
+            EQIR = 13,
+            EQRI = 14,
+            EQRR = 15,
         }
         struct Instruction {
             public int Op;
@@ -55,89 +73,138 @@ namespace day16_1 {
                 return true;
             }
         }
-        static int CountOpMatches(Operation op) {
-            int matches = 0;
+        static void ConstrainOp(Operation op, int[] opMasks) {
             // addr(add register) stores into register C the result of adding register A and register B.
             if (op.Validate(Arg.REG, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] + op.Before[op.Inst.B])) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] + op.Before[op.Inst.B])) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.ADDR);
             }
             // addi(add immediate) stores into register C the result of adding register A and value B.
             if (op.Validate(Arg.REG, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] + op.Inst.B)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] + op.Inst.B)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.ADDI);
             }
             // mulr(multiply register) stores into register C the result of multiplying register A and register B.
             if (op.Validate(Arg.REG, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] * op.Before[op.Inst.B])) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] * op.Before[op.Inst.B])) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.MULR);
             }
             // muli(multiply immediate) stores into register C the result of multiplying register A and value B.
             if (op.Validate(Arg.REG, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] * op.Inst.B)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] * op.Inst.B)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.MULI);
             }
             // banr(bitwise AND register) stores into register C the result of the bitwise AND of register A and register B.
             if (op.Validate(Arg.REG, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] & op.Before[op.Inst.B])) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] & op.Before[op.Inst.B])) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.BANR);
             }
             // bani(bitwise AND immediate) stores into register C the result of the bitwise AND of register A and value B.
             if (op.Validate(Arg.REG, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] & op.Inst.B)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] & op.Inst.B)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.BANI);
             }
             // borr(bitwise OR register) stores into register C the result of the bitwise OR of register A and register B.
             if (op.Validate(Arg.REG, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] | op.Before[op.Inst.B])) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] | op.Before[op.Inst.B])) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.BORR);
             }
             // bori(bitwise OR immediate) stores into register C the result of the bitwise OR of register A and value B.
             if (op.Validate(Arg.REG, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] | op.Inst.B)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] | op.Inst.B)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.BORI);
             }
             // setr(set register) copies the contents of register A into register C. (Input B is ignored.)
             if (op.Validate(Arg.REG, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A])) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A])) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.SETR);
             }
             // seti(set immediate) stores value A into register C. (Input B is ignored.)
             if (op.Validate(Arg.VAL, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Inst.A)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Inst.A)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.SETI);
             }
             // gtir(greater - than immediate / register) sets register C to 1 if value A is greater than register B. Otherwise, register C is set to 0.
             if (op.Validate(Arg.VAL, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Inst.A > op.Before[op.Inst.B] ? 1 : 0)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Inst.A > op.Before[op.Inst.B] ? 1 : 0)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.GTIR);
             }
             // gtri(greater - than register / immediate) sets register C to 1 if register A is greater than value B. Otherwise, register C is set to 0.
             if (op.Validate(Arg.REG, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] > op.Inst.B ? 1 : 0)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] > op.Inst.B ? 1 : 0)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.GTRI);
             }
             // gtrr(greater - than register / register) sets register C to 1 if register A is greater than register B. Otherwise, register C is set to 0.
             if (op.Validate(Arg.REG, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] > op.Before[op.Inst.B] ? 1 : 0)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] > op.Before[op.Inst.B] ? 1 : 0)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.GTRR);
             }
             // eqir(equal immediate / register) sets register C to 1 if value A is equal to register B. Otherwise, register C is set to 0.
             if (op.Validate(Arg.VAL, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Inst.A == op.Before[op.Inst.B] ? 1 : 0)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Inst.A == op.Before[op.Inst.B] ? 1 : 0)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.EQIR);
             }
             // eqri(equal register / immediate) sets register C to 1 if register A is equal to value B. Otherwise, register C is set to 0.
             if (op.Validate(Arg.REG, Arg.VAL, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] == op.Inst.B ? 1 : 0)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] == op.Inst.B ? 1 : 0)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.EQRI);
             }
             // eqrr(equal register / register) sets register C to 1 if register A is equal to register B. Otherwise, register C is set to 0.
             if (op.Validate(Arg.REG, Arg.REG, Arg.REG) &&
-                op.After[op.Inst.C] == (op.Before[op.Inst.A] == op.Before[op.Inst.B] ? 1 : 0)) {
-                matches += 1;
+                op.After[op.Inst.C] != (op.Before[op.Inst.A] == op.Before[op.Inst.B] ? 1 : 0)) {
+                opMasks[op.Inst.Op] &= ~(1 << (int)OpcodeId.EQRR);
             }
-            return matches;
+        }
+        static void ExecuteInstruction(Instruction inst, OpcodeId[] opcodeMap, int[] regs) {
+            if (opcodeMap[inst.Op] == OpcodeId.ADDR) {
+                // addr(add register) stores into register C the result of adding register A and register B.
+                regs[inst.C] = regs[inst.A] + regs[inst.B];
+            } else if (opcodeMap[inst.Op] == OpcodeId.ADDI) {
+                // addi(add immediate) stores into register C the result of adding register A and value B.
+                regs[inst.C] = regs[inst.A] + inst.B;
+            } else if (opcodeMap[inst.Op] == OpcodeId.MULR) {
+                // mulr(multiply register) stores into register C the result of multiplying register A and register B.
+                regs[inst.C] = regs[inst.A] * regs[inst.B];
+            } else if (opcodeMap[inst.Op] == OpcodeId.MULI) {
+                // muli(multiply immediate) stores into register C the result of multiplying register A and value B.
+                regs[inst.C] = regs[inst.A] * inst.B;
+            } else if (opcodeMap[inst.Op] == OpcodeId.BANR) {
+                // banr(bitwise AND register) stores into register C the result of the bitwise AND of register A and register B.
+                regs[inst.C] = regs[inst.A] & regs[inst.B];
+            } else if (opcodeMap[inst.Op] == OpcodeId.BANI) {
+                // bani(bitwise AND immediate) stores into register C the result of the bitwise AND of register A and value B.
+                regs[inst.C] = regs[inst.A] & inst.B;
+            } else if (opcodeMap[inst.Op] == OpcodeId.BORR) {
+                // borr(bitwise OR register) stores into register C the result of the bitwise OR of register A and register B.
+                regs[inst.C] = regs[inst.A] | regs[inst.B];
+            } else if (opcodeMap[inst.Op] == OpcodeId.BORI) {
+                // bori(bitwise OR immediate) stores into register C the result of the bitwise OR of register A and value B.
+                regs[inst.C] = regs[inst.A] | inst.B;
+            } else if (opcodeMap[inst.Op] == OpcodeId.SETR) {
+                // setr(set register) copies the contents of register A into register C. (Input B is ignored.)
+                regs[inst.C] = regs[inst.A];
+            } else if (opcodeMap[inst.Op] == OpcodeId.SETI) {
+                // seti(set immediate) stores value A into register C. (Input B is ignored.)
+                regs[inst.C] = inst.A;
+            } else if (opcodeMap[inst.Op] == OpcodeId.GTIR) {
+                // gtir(greater - than immediate / register) sets register C to 1 if value A is greater than register B. Otherwise, register C is set to 0.
+                regs[inst.C] = (inst.A > regs[inst.B]) ? 1 : 0;
+            } else if (opcodeMap[inst.Op] == OpcodeId.GTRI) {
+                // gtri(greater - than register / immediate) sets register C to 1 if register A is greater than value B. Otherwise, register C is set to 0.
+                regs[inst.C] = (regs[inst.A] > inst.B) ? 1 : 0;
+            } else if (opcodeMap[inst.Op] == OpcodeId.GTRR) {
+                // gtrr(greater - than register / register) sets register C to 1 if register A is greater than register B. Otherwise, register C is set to 0.
+                regs[inst.C] = (regs[inst.A] > regs[inst.B]) ? 1 : 0;
+            } else if (opcodeMap[inst.Op] == OpcodeId.EQIR) {
+                // eqir(equal immediate / register) sets register C to 1 if value A is equal to register B. Otherwise, register C is set to 0.
+                regs[inst.C] = (inst.A == regs[inst.B]) ? 1 : 0;
+            } else if (opcodeMap[inst.Op] == OpcodeId.EQRI) {
+                // eqri(equal register / immediate) sets register C to 1 if register A is equal to value B. Otherwise, register C is set to 0.
+                regs[inst.C] = (regs[inst.A] == inst.B) ? 1 : 0;
+            } else if (opcodeMap[inst.Op] == OpcodeId.EQRR) {
+                // eqrr(equal register / register) sets register C to 1 if register A is equal to register B. Otherwise, register C is set to 0.
+                regs[inst.C] = (regs[inst.A] == regs[inst.B]) ? 1 : 0;
+            }
         }
         static string Solve(string inputFile) {
             List<Operation> operations = new List<Operation>();
@@ -203,15 +270,42 @@ namespace day16_1 {
                 inStream.Dispose();
             }
 
-            int threePlusMatches = 0;
+            int[] opMasks = new int[16];
+            for (int i = 0; i < opMasks.Length; ++i) {
+                opMasks[i] = 0xFFFF;
+            }
             foreach (var op in operations) {
-                int matches = CountOpMatches(op); // TIL: can't pass foreach vars as refs
-                if (matches >= 3) {
-                    threePlusMatches += 1;
+                ConstrainOp(op, opMasks);
+            }
+            for (var i = 0; i < opMasks.Length; ++i) {
+                //Console.WriteLine($"opcode {i,2:D}: {Convert.ToString(opMasks[i], 2).PadLeft(16, '0')}");
+            }
+
+            OpcodeId[] opcodeMap = new OpcodeId[16];
+            for (int iteration = 0; iteration < 16; ++iteration) {
+                for (int id = 0; id < 16; ++id) {
+                    int matches = 0;
+                    int which = -1;
+                    for (int opcode = 0; opcode < 16; ++opcode) {
+                        if ((opMasks[opcode] & (1 << id)) != 0) {
+                            matches += 1;
+                            which = opcode;
+                        }
+                    }
+                    if (matches == 1) {
+                        //Console.WriteLine($"{iteration}: opcode {which} must be operation {id}={((OpcodeId)id).ToString()}");
+                        opcodeMap[which] = (OpcodeId)id;
+                        opMasks[which] = (1 << id);
+                    }
                 }
             }
 
-            return threePlusMatches.ToString();
+            int[] regs = new int[4];
+            foreach (var inst in testProgram) {
+                ExecuteInstruction(inst, opcodeMap, regs);
+            }
+
+            return regs[0].ToString();
         }
         static void Main(string[] args) {
             Console.WriteLine(Solve(args[0]));
