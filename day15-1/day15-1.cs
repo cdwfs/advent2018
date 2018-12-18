@@ -244,6 +244,7 @@ namespace day15_1 {
                 }
                 goblins = goblinList.ToArray();
                 elves = elfList.ToArray();
+                PrintMap(map, creatureMap);
             }
 
             // Simulate!
@@ -253,8 +254,6 @@ namespace day15_1 {
             Array.Copy(goblins, 0, turnOrder, 0, goblins.Length);
             Array.Copy(elves, 0, turnOrder, goblins.Length, elves.Length);
             while (!combatDone) {
-                PrintMap(map, creatureMap);
-
                 // Determine turn order. sort all goblins & elves together by reading order in a separate array.
                 Array.Sort(turnOrder);
 
@@ -399,8 +398,10 @@ namespace day15_1 {
                 if (!combatDone) {
                     completeRounds += 1;
                     Console.WriteLine($"{completeRounds} rounds complete");
+                    PrintMap(map, creatureMap);
                 }
             }
+            Console.WriteLine("Final state:");
             PrintMap(map, creatureMap);
 
             // Report results
