@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace day15_1 {
+namespace day15_2 {
     class Program {
         static int MAP_X = 0, MAP_Y = 0;
         // Creature class
@@ -36,8 +36,8 @@ namespace day15_1 {
         static Creature FindAdjacentTarget(Creature c, Creature[,] m) {
             Creature target = null;
             int minTargetHealth = Int32.MaxValue;
-            if (c.Y > 0 && m[c.Y-1, c.X] != null) {
-                Creature t = m[c.Y-1, c.X];
+            if (c.Y > 0 && m[c.Y - 1, c.X] != null) {
+                Creature t = m[c.Y - 1, c.X];
                 if (t.IsAlive && t.Species != c.Species && t.Health < minTargetHealth) {
                     target = t;
                     minTargetHealth = t.Health;
@@ -68,6 +68,7 @@ namespace day15_1 {
         }
         // Print map state
         static void PrintMap(char[,] map, Creature[,] creatureMap) {
+            return;
             for (int y = 0; y < MAP_Y; ++y) {
                 for (int x = 0; x < MAP_X; ++x) {
                     Console.Write(map[y, x]);
@@ -137,7 +138,7 @@ namespace day15_1 {
                                 Y = y,
                                 Species = c,
                                 Health = STARTING_HEALTH,
-                                AttackPower = ATTACK_POWER,
+                                AttackPower = c == 'G' ? ATTACK_POWER : 25, // binary searched between 3 and 200 to find this value
                             };
                             if (c == 'G') {
                                 goblinList.Add(creature);
@@ -166,7 +167,7 @@ namespace day15_1 {
                 Array.Sort(turnOrder);
 
                 // Each unit takes its turn
-                foreach(Creature c in turnOrder) {
+                foreach (Creature c in turnOrder) {
                     // If this creature has health = 0, it is skipped (units can die mid-round)
                     if (!c.IsAlive) {
                         continue;
@@ -269,7 +270,7 @@ namespace day15_1 {
                         bool foundReachableTile = false;
                         Coordinate moveTarget = new Coordinate();
                         foreach (var t in inRangeTiles) {
-                            int distance = pathMap[t.Y,t.X].distance;
+                            int distance = pathMap[t.Y, t.X].distance;
                             Debug.Assert(distance >= 0);
                             if (distance > 0 && distance < minDistance) {
                                 moveTarget = t;
@@ -284,7 +285,7 @@ namespace day15_1 {
                         //   - If two paths of equal length exist, the step taken should be the own lower
                         //     in reading order. So, we need to know not just the shortest path but the
                         //     path length from each adjacent tile.
-                        int pathDir = pathMap[moveTarget.Y,moveTarget.X].dir;
+                        int pathDir = pathMap[moveTarget.Y, moveTarget.X].dir;
                         (int newX, int newY) = (c.X, c.Y);
                         if (pathDir == 1) {
                             newY -= 1;
@@ -341,9 +342,15 @@ namespace day15_1 {
             if (goblins.Count(g => g.IsAlive) > 0) {
                 winnerSpecies = "Goblins";
                 winnerTotalHealth = goblins.Sum(g => Math.Max(g.Health, 0));
+                Console.WriteLine("Goblins won; who cares?");
+                return;
             } else {
                 winnerSpecies = "Elves";
                 winnerTotalHealth = elves.Sum(e => Math.Max(e.Health, 0));
+                if (elves.Any(e => !e.IsAlive)) {
+                    Console.WriteLine("Elves won, but some died; who cares?");
+                    return;
+                }
             }
             Console.WriteLine($"{winnerSpecies} win with {winnerTotalHealth} total hit points left");
             Console.WriteLine($"Outcome: {completeRounds} * {winnerTotalHealth} = {completeRounds * winnerTotalHealth}");
