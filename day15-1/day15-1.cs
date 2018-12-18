@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -31,9 +32,6 @@ namespace day15_1 {
         }
         static int FindPath(int fromX, int fromY, int toX, int toY, char[,] map) {
             Debug.Assert(map[toY, toX] == '.', "pathing to occupied cell");
-            if (map[fromY, fromX] != '.') {
-                return -1;
-            }
             Location current = null;
             var start = new Location { X = fromX, Y = fromY };
             var target = new Location { X = toX, Y = toY };
@@ -182,6 +180,21 @@ namespace day15_1 {
             }
             Console.WriteLine("");
         }
+        struct Coordinate : IComparable {
+            public int X, Y;
+
+            public int CompareTo(object obj) {
+                Coordinate rhs = (Coordinate)obj;
+                int lhsIndex = Y * MAP_X + X;
+                int rhsIndex = rhs.Y * MAP_X + rhs.X;
+                if (lhsIndex < rhsIndex) {
+                    return -1;
+                } else if (lhsIndex > rhsIndex) {
+                    return 1;
+                }
+                return 0;
+            }
+        }
         static void Main(string[] args) {
             // Read map
             char[,] map;
@@ -265,68 +278,45 @@ namespace day15_1 {
                     if (target == null) {
                         // - Identify all open tiles in range (not occupied, and adjacent to an enemy)
                         //   - If no open tiles are in range, this creature's turn is over.
-                        var inRangeTiles = new HashSet<(int x, int y)>(targets.Length * 4);
+                        var inRangeTileList = new HashSet<Coordinate>(targets.Length * 4);
                         bool hasInRangeTile = false;
                         foreach (var t in targets) {
                             if (t.Y > 0 && map[t.Y - 1, t.X] == '.') {
-                                inRangeTiles.Add((t.X, t.Y - 1));
+                                inRangeTileList.Add(new Coordinate { X = t.X, Y = t.Y - 1 });
                                 hasInRangeTile = true;
                             }
                             if (t.X > 0 && map[t.Y, t.X - 1] == '.') {
-                                inRangeTiles.Add((t.X - 1, t.Y));
+                                inRangeTileList.Add(new Coordinate { X = t.X - 1, Y = t.Y });
                                 hasInRangeTile = true;
                             }
                             if (t.X < MAP_X - 1 && map[t.Y, t.X + 1] == '.') {
-                                inRangeTiles.Add((t.X + 1, t.Y));
+                                inRangeTileList.Add(new Coordinate { X = t.X + 1, Y = t.Y });
                                 hasInRangeTile = true;
                             }
                             if (t.Y < MAP_Y - 1 && map[t.Y + 1, t.X] == '.') {
-                                inRangeTiles.Add((t.X, t.Y + 1));
+                                inRangeTileList.Add(new Coordinate { X = t.X, Y = t.Y + 1 });
                                 hasInRangeTile = true;
                             }
                         }
                         if (!hasInRangeTile) {
                             continue;
                         }
+                        var inRangeTiles = inRangeTileList.ToArray();
+                        Array.Sort(inRangeTiles);
 
                         // - Find a path to each open tile in range, tracking the shortest path
                         //   (breaking ties by reading order of the destination)
                         //   - If no open tiles are reachable, this creature's turn is over.
-                        bool foundReachableTile = false;
                         int minDistance = Int32.MaxValue;
-                        int pathDir = 0;
+                        bool foundReachableTile = false;
+                        Coordinate moveTarget = new Coordinate();
                         foreach (var t in inRangeTiles) {
-                            if (c.Y > 0) {
-                                int distance = FindPath(c.X, c.Y-1, t.x, t.y, map);
-                                if (distance > 0 && distance < minDistance) {
-                                    foundReachableTile = true;
-                                    minDistance = distance;
-                                    pathDir = 1;
-                                }
-                            }
-                            if (c.X > 0) {
-                                int distance = FindPath(c.X-1, c.Y, t.x, t.y, map);
-                                if (distance > 0 && distance < minDistance) {
-                                    foundReachableTile = true;
-                                    minDistance = distance;
-                                    pathDir = 2;
-                                }
-                            }
-                            if (c.X <= MAP_X - 1) {
-                                int distance = FindPath(c.X+1, c.Y, t.x, t.y, map);
-                                if (distance > 0 && distance < minDistance) {
-                                    foundReachableTile = true;
-                                    minDistance = distance;
-                                    pathDir = 3;
-                                }
-                            }
-                            if (c.Y < MAP_Y - 1) {
-                                int distance = FindPath(c.X, c.Y+1, t.x, t.y, map);
-                                if (distance > 0 && distance < minDistance) {
-                                    foundReachableTile = true;
-                                    minDistance = distance;
-                                    pathDir = 4;
-                                }
+                            int distance = FindPath(c.X, c.Y, t.X, t.Y, map);
+                            Debug.Assert(distance != 0, "erm nobody's adjacent?");
+                            if (distance > 0 && distance < minDistance) {
+                                moveTarget = t;
+                                minDistance = distance;
+                                foundReachableTile = true;
                             }
                         }
                         if (!foundReachableTile) {
@@ -336,6 +326,36 @@ namespace day15_1 {
                         //   - If two paths of equal length exist, the step taken should be the own lower
                         //     in reading order. So, we need to know not just the shortest path but the
                         //     path length from each adjacent tile.
+                        int pathDir = 0;
+                        minDistance = Int32.MaxValue;
+                        if (c.Y > 0 && map[c.Y-1,c.X] == '.') {
+                            int distance = FindPath(c.X, c.Y - 1, moveTarget.X, moveTarget.Y, map);
+                            if (distance >= 0 && distance < minDistance) {
+                                pathDir = 1;
+                                minDistance = distance;
+                            }
+                        }
+                        if (c.X > 0 && map[c.Y, c.X - 1] == '.') {
+                            int distance = FindPath(c.X - 1, c.Y, moveTarget.X, moveTarget.Y, map);
+                            if (distance >= 0 && distance < minDistance) {
+                                pathDir = 2;
+                                minDistance = distance;
+                            }
+                        }
+                        if (c.X < MAP_X - 1 && map[c.Y, c.X + 1] == '.') {
+                            int distance = FindPath(c.X + 1, c.Y, moveTarget.X, moveTarget.Y, map);
+                            if (distance >= 0 && distance < minDistance) {
+                                pathDir = 3;
+                                minDistance = distance;
+                            }
+                        }
+                        if (c.Y < MAP_Y - 1 && map[c.Y + 1, c.X] == '.') {
+                            int distance = FindPath(c.X, c.Y + 1, moveTarget.X, moveTarget.Y, map);
+                            if (distance >= 0 && distance < minDistance) {
+                                pathDir = 4;
+                                minDistance = distance;
+                            }
+                        }
                         (int newX, int newY) = (c.X, c.Y);
                         if (pathDir == 1) {
                             newY -= 1;
