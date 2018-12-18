@@ -330,7 +330,7 @@ namespace day15_1 {
             int winnerTotalHealth = 0;
             if (goblins.Count(g => g.IsAlive) > 0) {
                 winnerSpecies = "Goblins";
-                winnerTotalHealth = goblins.Sum(g => g.Health);
+                winnerTotalHealth = goblins.Sum(g => Math.Max(g.Health, 0));
             } else {
                 winnerSpecies = "Elves";
                 winnerTotalHealth = elves.Sum(e => Math.Max(e.Health, 0));
