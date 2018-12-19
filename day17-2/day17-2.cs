@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace day17_1 {
+namespace day17_2 {
     class Program {
         const int SPRING_X = 500;
         const int SPRING_Y = 0;
@@ -31,7 +31,7 @@ namespace day17_1 {
             for (int i = 0; i < 4; ++i) {
                 Console.Write("".PadLeft(4) + " ");
                 for (int x = 0; x < MAP_X_SIZE; ++x) {
-                    Console.Write(((MAP_X_MIN + x) / (int)Math.Pow(10, 3-i)) % 10);
+                    Console.Write(((MAP_X_MIN + x) / (int)Math.Pow(10, 3 - i)) % 10);
                 }
                 Console.WriteLine("");
             }
@@ -48,7 +48,7 @@ namespace day17_1 {
             Debug.Assert(map[y, x] != '#', "Can't change clay to water");
             int my = y + MAP_Y_MIN;
             int mx = x + MAP_X_MIN;
-            if (map[y,x] == '.' && my >= Y_MIN && my <= Y_MAX) {
+            if (my >= Y_MIN && my <= Y_MAX && c == '~') {
                 score += 1;
             }
             map[y, x] = c;
@@ -62,7 +62,7 @@ namespace day17_1 {
                     break;
                 } else if (map[fy, lx] == '|') {
                     // hit an existing stream to the left.
-                    if (map[fy + 1, lx] == '|' || map[fy+1,lx] == '.') {
+                    if (map[fy + 1, lx] == '|' || map[fy + 1, lx] == '.') {
                         break; // join this stream
                     } else if (map[fy + 1, lx] == '#' || map[fy + 1, lx] == '~') {
                         lx -= 1; // plow through it
@@ -129,7 +129,7 @@ namespace day17_1 {
                 }
                 if (spawnedStream) {
                     // spawning these streams may have filled up the current row, so check again
-                    for (; lx >= 0 && map[fy,lx] == '|'; --lx) { }
+                    for (; lx >= 0 && map[fy, lx] == '|'; --lx) { }
                     for (; rx < MAP_X_SIZE && map[fy, rx] == '|'; ++rx) { }
                     if (lx >= 0 && map[fy, lx] == '#' && rx < MAP_X_SIZE && map[fy, rx] == '#') {
                         // fill row with standing water, decrement fy, and try another row.
@@ -198,7 +198,7 @@ namespace day17_1 {
                         FixedAxis = dim0,
                         FixedValue = v,
                         Start = start,
-                        End  = end,
+                        End = end,
                     });
                 }
                 inStream.Dispose();
@@ -242,7 +242,7 @@ namespace day17_1 {
             return score.ToString();
         }
         static void Main(string[] args) {
-            Debug.Assert(Solve(args[0] + @"\day17-example0.txt", false) =="57");
+            Debug.Assert(Solve(args[0] + @"\day17-example0.txt", true) == "29");
             Console.WriteLine(Solve(args[0] + @"\day17-input.txt", false));
         }
     }

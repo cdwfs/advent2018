@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6868504A-3AE8-4B7D-A1A2-7CB72A809B12}</ProjectGuid>
+    <ProjectGuid>{133F8D7C-CC90-47F7-AB51-03EA28BBCDE9}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>day17_1</RootNamespace>
-    <AssemblyName>day17-1</AssemblyName>
+    <RootNamespace>day17_2</RootNamespace>
+    <AssemblyName>day17-2</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="day17-1.cs" />
+    <Compile Include="day17-2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
