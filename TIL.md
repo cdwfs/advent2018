@@ -88,7 +88,7 @@
 - `Array.FindIndex()` and `FindLastIndex()`
 
 ##### [Day 13](https://adventofcode.com/2018/day/13): traffic simulator
-- Dictionary initializer syntax (C#6+)
+- [Dictionary initializer syntax](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/object-and-collection-initializers#collection-initializers) (C#6+)
 - `IComparable` for `Sort()`ability.
 - `Array.Count(predicate)` to count the elements that satisfy a predicate without
   creating a temporary collection.
@@ -98,3 +98,48 @@
 
 ##### [Day 14](https://adventofcode.com/2018/day/14): recipe scoring
 - `const` members can't be static? (not a problem; I just wonder why that is)
+
+##### [Day 15](https://adventofcode.com/2018/day/15): nethack combat
+- Debug the scoring code as well as the program logic :(
+- Linq can be useful where performance isn't the primary goal.
+- Don't trust random code from the internet; the A* implementation I found
+  was orders of magnitude slower (and buggier) than my brute-force
+  breadth-first search.
+- Make my own solid A* implementation for next time.
+
+##### [Day 16](https://adventofcode.com/2018/day/16): CPU reverse engineering
+- Can't pass foreach iterators as `ref` parameters to functions.
+
+##### [Day 17](https://adventofcode.com/2018/day/17): minecraft water
+- Settling on a template:
+  - Put main puzzle logic in a `Solve()` function that returns a string
+  - Include examples as unit tests & assert against their expected values
+  - Make debug printout a flag to solve, so that problematic cases can be
+    debugged in isolation.
+  - command line argument should be the inputs directory, not the specific
+    filename.
+- Once again, double-check the scoring code! In this case, I wasn't counting
+  water outside the range xMin..xMax, even though the rules say any x coordinate
+  was allowed.
+
+##### [Day 18](https://adventofcode.com/2018/day/18): game of life
+- `GetHashCode()` for generalized arrays does not take the array contents into account.
+  So, if you want to use an array as a `Dictionary` key, you need to manually accumulate
+  the contents.
+- `char[].ToString()` does not do what you think it does! It gives you a human-readable name
+  for the variable. To convert the array into a `string` object, use `new string(char[])`.
+
+##### [Day 19](https://adventofcode.com/2018/day/19): assembly reading
+- Seriously just use 64-bit ints for everything. Overflow bugs *suck*.
+- Dictionary of anonymous delegates for each opcode:
+    ```
+    delegate void ProcessOp(Int64 a, Int64 b, Int64 c, Int64[] regs);
+    static Dictionary<string, ProcessOp> ops = new Dictionary<string, ProcessOp> {
+        ["addr"] = (a, b, c, regs) => regs[c] = (regs[a] + regs[b]),
+        ["addi"] = (a, b, c, regs) => regs[c] = (regs[a] + b),
+        ...
+    };
+    // Simulate the instruction "addr 1 2 3"
+    ops["addr"](1,2,3,regs);
+
+    ```
