@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace day20_1 {
     class Program {
         const int NORTH_DOOR = 1;
-        const int EAST_DOOR  = 2;
+        const int EAST_DOOR = 2;
         const int SOUTH_DOOR = 4;
-        const int WEST_DOOR  = 8;
+        const int WEST_DOOR = 8;
         static string Solve(string inputFilename, bool enableLogs) {
             // Construct the facility map
             var roomDoors = new Dictionary<(int x, int y), int> {
@@ -26,7 +26,7 @@ namespace day20_1 {
                 Debug.Assert(line.Last() == '$');
                 var posStack = new Stack<(int x, int y)>();
                 (int x, int y) pos = (0, 0);
-                for(int i=0; i<line.Length; ++i) {
+                for (int i = 0; i < line.Length; ++i) {
                     char c = line[i];
                     if (c == '^') {
                         Debug.Assert(i == 0);
@@ -101,14 +101,14 @@ namespace day20_1 {
                 }
             }
             // TODO: should be a one-liner for the max value in a dictionary?
-            return shortestRoomPath.Values.Max().ToString();
+            return shortestRoomPath.Values.Count(pl => (pl >= 1000)).ToString();
         }
         static void Main(string[] args) {
-            Debug.Assert(Solve(args[0] + @"\day20-example0.txt", false) == "3");
-            Debug.Assert(Solve(args[0] + @"\day20-example1.txt", false) == "10");
-            Debug.Assert(Solve(args[0] + @"\day20-example2.txt", false) == "18");
-            Debug.Assert(Solve(args[0] + @"\day20-example3.txt", false) == "23");
-            Debug.Assert(Solve(args[0] + @"\day20-example4.txt", false) == "31");
+            //Debug.Assert(Solve(args[0] + @"\day20-example0.txt", false) == "3");
+            //Debug.Assert(Solve(args[0] + @"\day20-example1.txt", false) == "10");
+            //Debug.Assert(Solve(args[0] + @"\day20-example2.txt", false) == "18");
+            //Debug.Assert(Solve(args[0] + @"\day20-example3.txt", false) == "23");
+            //Debug.Assert(Solve(args[0] + @"\day20-example4.txt", false) == "31");
             Console.WriteLine(Solve(args[0] + @"\day20-input.txt", false));
         }
     }
