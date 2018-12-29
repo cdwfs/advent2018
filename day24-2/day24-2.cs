@@ -246,7 +246,7 @@ namespace day24_2 {
         }
         static void Main(string[] args) {
             Debug.Assert(Solve(args[0] + @"\day24-example0.txt", 1570, false) == "51");
-            // A boost of 34 leads to a stalemate!
+            // A boost of 34 leads to a stalemate! TODO: detect those.
             Console.WriteLine(Solve(args[0] + @"\day24-input.txt", 35, false));
         }
     }
