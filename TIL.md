@@ -131,6 +131,8 @@
 
 ##### [Day 19](https://adventofcode.com/2018/day/19): assembly reading
 - Seriously just use 64-bit ints for everything. Overflow bugs *suck*.
+  - ...or enable integer overflow detection project-wide!
+    (Properties -> Build -> Advanced)
 - Dictionary of anonymous delegates for each opcode:
     ```
     delegate void ProcessOp(Int64 a, Int64 b, Int64 c, Int64[] regs);
@@ -143,3 +145,62 @@
     ops["addr"](1,2,3,regs);
 
     ```
+
+##### [Day 20](https://adventofcode.com/2018/day/20): mapping via regex
+- Read the instructions carefully. I lost hours on this puzzle assuming that
+  `()` meant the same thing here that it does in _regular_ regular expressions.
+  It doesn't; it's much simpler than I thought, and turned O(days) into O(N). 
+
+##### [Day 21](https://adventofcode.com/2018/day/21): ElfCode disassembly again
+- No real language/standard library lessons today.
+- I did spend longer than necessary trying to understand the code vs. plugging in
+  random data / setting breakpoints, and the latter would've brought me to a solution
+  faster.
+
+##### [Day 22](https://adventofcode.com/2018/day/22): subterranean maze
+- Tuple equality requires C# 7.3
+- Write your own A* :)
+  - I'm not completely satisfied with mine -- it seems like the ideal
+    structure to store the incomplete nodes to explore is a heap-based
+    priority queue (O(N) insertion and extract-minimum), but it's also
+    necessary to edit the priority of arbitrary nodes in the queue as
+    new paths are discovered and their costs are adjusted. Naively, that
+    would be O(N) in a heap. The obvious solution would be for each node
+    in the navigation graph to track the position of its corresponding
+    entry in the heap so that editing becomes O(logN), but that's more
+    bookkeeping than I had the patience for today.
+  - In fact, my solution just uses an unsorted List instead of a
+    priority queue. Maybe the pending node count just never gets high
+    enough in practice for the algorithmic complexity to matter here.
+
+##### [Day 23](https://adventofcode.com/2018/day/23): octahedron/cube intersection
+- I spent _waaaay_ too long trying to cleverly intersect axis-aligned cubes
+  and axis-aligned octahedrons; it was _much_ simpler to just compute the
+  Manhattan distance from the bot position to the edge of the cube and compare
+  against the bot radius.
+- Also, my initial recursive descent subdivided each level into a 10x10x10 grid,
+  which was way too many children to check. 2x2x2 was significantly more efficient;
+  the tree was 20 levels deeper, but each level had 8 children instead of 1000.
+- My implementation does two passes -- first to determine the max in-range
+  count, and a second to determine the min-distance point with that count.
+  That may not be necessary after the previous optimizations, but I was too lazy
+  to remove it after getting the correct answer so quickly.
+- I should've used a custom sorting function instead of negating the sort
+  index, but hey.
+
+##### [Day 24](https://adventofcode.com/2018/day/24): immune system battle royale
+- [String.Split()](https://docs.microsoft.com/en-us/dotnet/api/system.string.split?f1url=https%3A%2F%2Fmsdn.microsoft.com%2Fquery%2Fdev15.query%3FappId%3DDev15IDEF1%26l%3DEN-US%26k%3Dk(System.String.Split);k(TargetFrameworkMoniker-.NETFramework,Version%3Dv4.7.2);k(DevLang-csharp)%26rd%3Dtrue&view=netframework-4.7.2) usage.
+  It seems annoying that in order to use a multi-character delimiter, you need to create
+  a temporary one-element array of `string`s to pass in. Is there an equivalent to the C++
+  `&singleElement` trick?
+- Finally experimented with custom comparison functions for `Array.Sort()`. I'm
+  probably re-sorting too frequently; the initiative ordering never changes, only
+  the effective power.
+- Had to resort to multiple `Regex` passes to extract the weakness/immunity of each
+  group. I'm okay with that.
+- I should have detected stalemates for part 2, but since I was manually
+  binary-searching anyway, I didn't bother.
+
+##### [Day 25](https://adventofcode.com/2018/day/25): 4D constellations
+- Nested collections!
+- No real issues; thankfully the Christmas Day puzzle was a light one.
