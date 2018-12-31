@@ -83,7 +83,7 @@ namespace day20_1 {
             };
             var bfsQueue = new Queue<(int x, int y, int pathLen)>();
             bfsQueue.Enqueue((0, 0, 0));
-            while (bfsQueue.Count() > 0) { // TODO: no quick Empty() test?
+            while (bfsQueue.Count > 0) {
                 var room = bfsQueue.Dequeue();
                 shortestRoomPath[(room.x, room.y)] = room.pathLen;
                 int doors = roomDoors[(room.x, room.y)];
@@ -100,7 +100,6 @@ namespace day20_1 {
                     bfsQueue.Enqueue((room.x - 1, room.y, room.pathLen + 1));
                 }
             }
-            // TODO: should be a one-liner for the max value in a dictionary?
             return shortestRoomPath.Values.Count(pl => (pl >= 1000)).ToString();
         }
         static void Main(string[] args) {
